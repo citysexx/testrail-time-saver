@@ -14,7 +14,7 @@ This script works on Linux. For Windows, manual tweaks will be needed.
 
 ## Dependencies
 - `python3` (3.9 or higher)
-- `python-venv` package for linux. Please follow your distribution rules to install this package.
+- you may need `python3-venv` package for linux. I say you MAY because some distros like Red Hat do not need this dependency. Please follow your distribution guides to install this package.
 Tested on Ubuntu and Arch Linux.
 Arch: `pacman -S python3-venv`
 Ubuntu: `apt install python3-venv` 
@@ -23,6 +23,7 @@ Ubuntu: `apt install python3-venv`
 - clone this repository
 - `chmod +x start.sh`
 - launch `start.sh` without sudo privileges, enter your credentials and good to go!
+**Note**: The creds are being saved locally at your folder and do not go anywhere. You can reuse the script without re-entering creds againor you may rewrite them
 
 ## Contact me
 https://t.me/gordmitrii
