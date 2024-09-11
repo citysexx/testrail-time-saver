@@ -1,5 +1,7 @@
 from testrail_api import TestRailAPI
 from testrail_api._exception import StatusCodeError
+from dotenv import dotenv_values
+from os import system
 
 
 class Colors:
@@ -49,15 +51,19 @@ def do_work(plan_id, action, api_local) -> None:
                             comment="Put into retest by python3 automatically",
                             version=version
                         )
-                        print(f"{Colors.OKGREEN}{test["id"]} {test["title"]} Marked to Retest!{Colors.ENDC}")
+                        print(f"{Colors.OKGREEN}{test['id']} {test['title']} Marked to RETEST!{Colors.ENDC}")
                     else:
-                        print(f"{Colors.WARNING}{test["id"]} {test["title"]} Was already in retest!{Colors.ENDC}")
+                        print(f"{Colors.WARNING}{test['id']} {test['title']} Was already in RETEST!{Colors.ENDC}")
 
 
-# TODO Later replace with dotenv
-# TODO greet and ask for credentials and link
-print("Connecting to the server...")
-api = TestRailAPI()
+print("\nConnecting to the server...")
+env_vars = dotenv_values(".env")
+
+api = TestRailAPI(
+    url=env_vars["TESTRAIL_URL"],
+    email=env_vars["TESTRAIL_EMAIL"],
+    password=env_vars["TESTRAIL_PASSWORD"]
+)
 
 # validate by sending a request and process response code
 try:
