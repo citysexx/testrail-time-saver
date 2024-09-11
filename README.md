@@ -20,10 +20,11 @@ Arch: `pacman -S python3-venv`
 Ubuntu: `apt install python3-venv` 
 
 ## Usage
-- clone this repository
+- clone this repository `git clone https://github.com/citysexx/testrail-time-saver.git`
+- `cd testrail-time-saver/`
 - `chmod +x start.sh`
 - launch `start.sh` without sudo privileges, enter your credentials and good to go!
-**Note**: The creds are being saved locally at your folder and do not go anywhere. You can reuse the script without re-entering creds againor you may rewrite them
+**Note**: The creds are being saved locally at your folder and do not go anywhere. You can reuse the script without re-entering creds again OR you may rewrite them
 
 ## Contact me
 https://t.me/gordmitrii
