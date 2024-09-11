@@ -66,12 +66,14 @@ function get_creds {
 }
 
 python3 -m venv .venv
-pip install -r ./requirements.txt
-
-ENV_FILE="./.env"
-nodo_anything=0
-if test -f "$ENV_FILE"; then
-    yes_or_no "Creds already exist. Do you want to rewrite them?" && rm .env && get_creds
+source ./.venv/bin/activate
+echo Installing python packages with pip...
+if pip install -r ./requirements.txt > /dev/null; then
+    ENV_FILE="./.env"
+    if test -f "$ENV_FILE"; then
+        yes_or_no "Creds already exist. Do you want to rewrite them?" && rm .env && get_creds
+    fi
+    python3 main.py
+else
+    echo "Your pip output sucks. Please refer to the errors and fix them."
 fi
-
-python3 main.py

@@ -1,7 +1,8 @@
 from testrail_api import TestRailAPI
 from testrail_api._exception import StatusCodeError
 from dotenv import dotenv_values
-from os import system
+from requests.exceptions import ConnectTimeout
+from time import sleep
 
 
 class Colors:
@@ -27,11 +28,13 @@ def grab_input(some_iterable: tuple) -> int:
 
 
 def check_presence(number, numbers) -> int or None:
-    if not number in numbers:
-        raise NotImplementedError("Wrong choice!")
-    elif number == 0:
+    if number == 0:
         print("Nothing to do, exitting...")
         return None
+        
+    elif not number in numbers:
+        raise NotImplementedError("Wrong choice!")
+
     else:
         return number
 
@@ -71,6 +74,9 @@ try:
 except StatusCodeError as error:
     print("Error Connecting to the Testrail API! The reason:", error)
     exit(1)
+except ConnectTimeout:
+    print("Destination timed out your connection a lot of times. Check if you set connection route correctly.")
+    exit(1)
 else:
     print("Connected successfully!")
 
@@ -83,38 +89,39 @@ actions: dict[int, str] = {
 projects: dict[int, str] = {
     project["id"]: [project["name"], project["url"]] for project in api.projects.get_projects()["projects"]
 }
+sleep(1)
 print("There are projects you can choose from:")
-print("\n".join([f'===================={id}. {projects[id][0]}====================\nLink: {projects[id][1]}\n' for id in projects.keys()]))
+print("\n".join([f'{Colors.BOLD}===================={id}. {projects[id][0]}===================={Colors.ENDC}\nLink: {projects[id][1]}\n' for id in projects.keys()]))
 project_ids = tuple(projects.keys())
 project_id = grab_input(project_ids)
 project_id = check_presence(project_id, project_ids)
 if project_id is None:
     exit(0)
-print(f"\nChose project {projects[project_id][0]}!")
+print(f"\nChose project {Colors.BOLD}{projects[project_id][0]}{Colors.ENDC}")
 
-# TODO get project id and go to the menu of a project with test plans. Choose a plan
+sleep(1)
 print("There are test plans you can choose from:")
 plans: dict[int, str] = {
     plan["id"]: [plan["name"], plan["url"]] for plan in api.plans.get_plans(project_id=project_id)["plans"]
 }
 plan_ids = tuple(plans.keys())
-print("\n".join([f'===================={id}. {plans[id][0]}==================\nLink: {plans[id][1]}\n' for id in plans.keys()]))
+print("\n".join([f'{Colors.BOLD}===================={id}. {plans[id][0]}=================={Colors.ENDC}\nLink: {plans[id][1]}\n' for id in plans.keys()]))
 plan_id = grab_input(plan_ids)
 plan_id = check_presence(plan_id, plan_ids)
 if plan_id is None:
     exit(0)
-print(f"\nChose plan {plans[plan_id][0]}!")
+print(f"\nChose plan {Colors.BOLD}{plans[plan_id][0]}{Colors.ENDC}")
 
-print(f"So, project is {projects[project_id][0]} and test plan is {plans[plan_id][0]}")
-action_prompt = "\n".join([f"{action_id}: {actions[action_id]}" for action_id in actions.keys()])
+sleep(1)
+print(f"Now, select one of the options below:")
+action_prompt = "\n".join([f"{action_id}: {actions[action_id]}" for action_id in actions.keys()]) + "\n"
 print(action_prompt)
 action = grab_input(tuple(actions.values()))
 if action == 0:
     print("Nothing to do, exitting...")
     exit(0)
 
-# Notify user about his intentions
-confirmation = input(f"\nProject: {projects[project_id][0]}. You are choosing to {actions[action]} on a test plan {plans[plan_id][0]}. The dev is not responsible for your actions, when you can change the data on another project by mistake! Are you sure? [y/N] >>> ")
+confirmation = input(f"\nProject: {Colors.BOLD}{projects[project_id][0]}{Colors.ENDC}. You are choosing to {Colors.BOLD}{actions[action]}{Colors.ENDC} on a test plan {Colors.BOLD}{plans[plan_id][0]}{Colors.ENDC}\nThe dev is not responsible for your actions, when you can change the data on another project by mistake!\nAre you sure? [y/N] >>> ")
 if confirmation == "\n":
     confirmation = "n"
 elif confirmation.lower() == "y":
@@ -123,7 +130,7 @@ elif confirmation.lower() == "y":
         action=action,
         api_local=api
     )
-    pass
+    print(f"{Colors.OKBLUE}Finished successfully!{Colors.ENDC}")
 else:
     print("You changed your mind. Quitting!")
     exit(0)
