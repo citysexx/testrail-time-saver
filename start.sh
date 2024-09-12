@@ -72,6 +72,8 @@ if pip install -r ./requirements.txt > /dev/null; then
     ENV_FILE="./.env"
     if test -f "$ENV_FILE"; then
         yes_or_no "Creds already exist. Do you want to rewrite them?" && rm .env && get_creds
+    else
+        get_creds
     fi
     python3 main.py
 else
